@@ -1,0 +1,138 @@
+CrossCompile
+https://developer.toradex.com/linux-bsp/application-development/programming-languages/hello-world-application-on-embedded-linux-ccpp/
+
+Ecplise Addons
+https://community.nxp.com/t5/i-MX-Processors-Knowledge-Base/Setting-up-the-Eclipse-IDE-for-Yocto-Application-Development/ta-p/1110480
+
+sudo screen /dev/ttyUSB0 115200
+ssh root@192.168.1.167
+scp HelloWorld root@192.168.1.167:/home/root/
+
+linkLibraries
+https://lists.yoctoproject.org/g/eclipse-yocto/topic/61241576?p=%2C%2C%2C20%2C0%2C0%2C0%3A%3Arecentpostdate%2Fsticky%2C%2C%2C20%2C1%2C0%2C61241576
+
+updateBSPLayers
+https://developer-archives.toradex.com/knowledge-base/custom-meta-layers-recipes-images-in-yocto-project
+
+
+https://docs.yoctoproject.org/1.4/dev-manual/dev-manual.html#adt-eclipse
+
+
+https://variwiki.com/index.php?title=Yocto_Programming_with_Eclipse
+
+https://askubuntu.com/questions/537132/how-to-compile-c-c-program-with-gstreamer
+
+https://developer.toradex.com/easy-installer/toradex-easy-installer/loading-toradex-easy-installer/#apalisimx8
+
+
+
+
+DOCKER STYLE:
+https://developer.toradex.com/torizon/application-development/ide-extension/add-dependencies-and-tools-to-existing-project
+
+    libgstreamer1.0-0 \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    gstreamer1.0-doc \
+    gstreamer1.0-tools \
+    gstreamer1.0-x \
+    gstreamer1.0-alsa \
+    gstreamer1.0-gl \
+    gstreamer1.0-gtk3 \
+    gstreamer1.0-qt5 \
+    
+    apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+    
+    
+https://developer.toradex.com/torizon/provided-containers/debian-containers-for-torizon#nxpi.mx8/8x/8mmini-basedsoms
+
+
+https://community.nxp.com/t5/i-MX-Processors/Question-about-IMX8MQ-and-Gstreamer-s-glimagesink-performance/m-p/1423121
+
+gst-launch-1.0 filesrc location=berryUpscaled.mp4 ! qtdemux ! queue ! h264parse ! v4l2h264dec ! imxvideoconvert_g2d ! queue ! waylandsink  window-width=2160  window-height=3840
+
+
+vi /etc/xdg/weston/weston.ini 
+
+[core]
+#gbm-format=argb8888
+idle-time=0
+#use-g2d=1
+xwayland=true
+repaint-window=16
+#enable-overlay-view=1
+modules=screen-share.so
+
+[shell]
+#size=1920x1080
+panel-position=none
+
+[libinput]
+enable_tap=true
+touchscreen_calibrator=true
+calibration_helper=/usr/bin/toradex-save-touchscreen-calibration
+
+[output]
+name=HDMI-A-1
+mode=2160x3840@60
+#transform=rotate-90
+
+#[output]
+#name=HDMI-A-2
+#mode=off
+#	WIDTHxHEIGHT    Resolution size width and height in pixels
+#	off             Disables the output
+#	preferred       Uses the preferred mode
+#	current         Uses the current crt controller mode
+transform=rotate-90
+
+[screen-share]
+command=/usr/bin/weston --backend=rdp-backend.so --shell=fullscreen-shell.so --no-clients-resize --rdp-tls-cert=/etc/freerdp/keys/server.crt --rdp-tls-key=/etc/freerdp/keys/server.key
+
+
+
+
+GST_DEBUG=2
+
+Get File from GLib
+https://mail.gnome.org/archives/gnome-devel-list/2015-July/msg00000.html
+
+BUILDING
+
+# systemctl stop wayland-app-launch
+# systemctl disable wayland-app-launch
+
+
+https://developer.toradex.com/linux-bsp/os-development/build-yocto/build-a-reference-image-with-yocto-projectopenembedded
+
+
+
+
+
+
+
+
+
+
+
+
+DEPLOYMENT!
+
+SSH into Device:
+ssh root@192.168.1.???
+
+systemctl stop wayland-app-launch
+systemctl disable wayland-app-launch
+
+mkdir /media/msata
+mount /dev/sda /media/msata/
+cp -r /media/msata/player /home/root/
+
+cp -r /media/msata/player /home/root/
+
+
+cp bearPlayer-launch.service /etc/systemd/system/
+

@@ -1,0 +1,64 @@
+//--------------------------------------------------------------------------------------------
+C/C++ Build Settings:
+Cross Settings:
+aarch64-tdx-linux-		//REMEMBER the following dash -
+/opt/tdx-xwayland/6.5.0/sysroots/x86_64-tdxsdk-linux/usr/bin/aarch64-tdx-linux
+
+Evironment:
+PATH
+/opt/tdx-xwayland/6.5.0/sysroots/x86_64-tdxsdk-linux/usr/bin/aarch64-tdx-linux:/home/william/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PGK_CONFIG_LIBDIR
+/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/lib/pkgconfig/
+PKG_CONFIG_PATH
+/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/lib/pkgconfig
+
+//--------------------------------------------------------------------------------------------
+
+Cross GCC Compiler
+-I/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include -I/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include/gstreamer-1.0 -I/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include/glib-2.0 -O0 -g3 -Wall -c -fmessage-length=0 --sysroot=/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux `/opt/tdx-xwayland/6.5.0/sysroots/x86_64-tdxsdk-linux/usr/bin/pkg-config --cflags gstreamer-1.0 gobject-2.0 glib-2.0` -fPIC
+
+Includes
+/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include
+/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include/gstreamer-1.0
+/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include/glib-2.0
+
+Misc OtherFlags:
+-c -fmessage-length=0 --sysroot=/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux `/opt/tdx-xwayland/6.5.0/sysroots/x86_64-tdxsdk-linux/usr/bin/pkg-config --cflags gstreamer-1.0 gobject-2.0 glib-2.0` -fPIC
+
+//--------------------------------------------------------------------------------------------
+Cross G++ Compiler
+-I/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include -I/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/lib/glib-2.0/include -I/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include/glib-2.0 -I/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include/gstreamer-1.0/ -O0 -g3 -Wall -c -fmessage-length=0 --sysroot=/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux `/opt/tdx-xwayland/6.5.0/sysroots/x86_64-tdxsdk-linux/usr/bin/pkg-config --libs gstreamer-1.0 glib-2.0`
+
+Includes
+/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include
+/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/lib/glib-2.0/include
+/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include/glib-2.0
+/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/include/gstreamer-1.0/
+
+Misc Otherflags:
+-c -fmessage-length=0 --sysroot=/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux `/opt/tdx-xwayland/6.5.0/sysroots/x86_64-tdxsdk-linux/usr/bin/pkg-config --libs gstreamer-1.0 glib-2.0`
+//--------------------------------------------------------------------------------------------
+
+Cross G++ Linker
+Command: g++
+All Options:
+-L/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/lib/ --sysroot=/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux `/opt/tdx-xwayland/6.5.0/sysroots/x86_64-tdxsdk-linux/usr/bin/pkg-config --libs gstreamer-1.0 gobject-2.0 glib-2.0`
+
+Libraries:
+/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/lib/
+
+Misc LinkrFlags:
+--sysroot=/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux `/opt/tdx-xwayland/6.5.0/sysroots/x86_64-tdxsdk-linux/usr/bin/pkg-config --libs gstreamer-1.0 gobject-2.0 glib-2.0`
+
+Misc:
+LinkerFlags:
+-c -fmessage-length=0 --sysroot=/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux `/opt/tdx-xwayland/6.5.0/sysroots/x86_64-tdxsdk-linux/usr/bin/pkg-config --libs gstreamer-1.0 glib-2.0`
+
+Libraries Search Path:
+/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux/usr/lib/
+Misc:
+Linker Flags:
+--sysroot=/opt/tdx-xwayland/6.5.0/sysroots/cortexa72-cortexa53-tdx-linux `/opt/tdx-xwayland/6.5.0/sysroots/x86_64-tdxsdk-linux/usr/bin/pkg-config --libs gstreamer-1.0 gobject-2.0 glib-2.0`
+
+//--------------------------------------------------------------------------------------------
+
