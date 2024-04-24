@@ -155,14 +155,12 @@ void StateMachine::updateSegment() {
 		currentState = states[0];	//this is the starting animation
 		lastTargetPosition = currentState.position;
 		targetPosition = currentState.position;
-		std::cout << "init2:" << currentState.name << "| EarlyExits0: "
-				<< tempEarlyExits.size() << std::endl;
+		std::cout << "init2:" << currentState.name << "| EarlyExits0: " << tempEarlyExits.size() << std::endl;
 		_segment.startTime = currentState.startTime;
 		_segment.endTime = currentState.endTime;
 		_segment.name = currentState.name;
 		isExitingEarly = false;
-		std::cout << "init :" << _segment.startTime << "end:"
-				<< _segment.endTime << std::endl;
+		std::cout << "init :" << _segment.startTime << "end:" << _segment.endTime << std::endl;
 		currentSegment = _segment;
 		init = false;
 		return;
@@ -172,14 +170,12 @@ void StateMachine::updateSegment() {
 	if (isExitingEarly) {
 		currentState = tempEarlyExits[0];
 		getTempEarlyExits(currentState.earlyExits);
-		std::cout << "NewState:" << currentState.name << "| EarlyExits0: "
-				<< tempEarlyExits.size() << std::endl;
+		std::cout << "NewState:" << currentState.name << "| EarlyExits0: " << tempEarlyExits.size() << std::endl;
 		_segment.startTime = currentState.startTime;
 		_segment.endTime = currentState.endTime;
 		_segment.name = currentState.name;
 		isExitingEarly = false;
-		std::cout << "start:" << _segment.startTime << "end:"
-				<< _segment.endTime << std::endl;
+		std::cout << "start:" << _segment.startTime << "end:" << _segment.endTime << std::endl;
 		currentSegment = _segment;
 		return;
 //		return _segment;

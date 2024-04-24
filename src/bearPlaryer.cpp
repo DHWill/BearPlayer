@@ -21,8 +21,6 @@ typedef struct {
 	GstElement *demuxer = nullptr;
 	GstElement *decoder = nullptr;
 	GstElement *pipeline = nullptr;
-	GstElement *colorbalance = nullptr;
-	GstElement *gleffects = nullptr;
 	GMainLoop *loop = nullptr;
 
 } PlayerData;
@@ -35,6 +33,8 @@ typedef struct {
 /*=====================================================================================
  * Pipeline Functions
  * ==================================================================================*/
+
+
 static bool updateStateMachine(gpointer _playerData) {
 	PlayerData *playerData = (PlayerData*) _playerData;
 	int p = playerData->sensorMan->getPositionValue();
@@ -46,7 +46,8 @@ static bool updateStateMachine(gpointer _playerData) {
 		}
 	} else {
 		playerData->stateMachine->setIsActive(true);
-		playerData->stateMachine->setTargetPosition(p);
+		playerData->stateMachine->setTargetPosition(playerData->stateMachine->randomPositionForTesting());
+//		playerData->stateMachine->setTargetPosition(p);		//this is for bear left right
 	}
 }
 
@@ -154,14 +155,14 @@ static gboolean query_position(gpointer *_playerData) {
 
 	if (gst_element_query_position(playerData->pipeline, GST_FORMAT_TIME,&pos)) {
 		gint64 frame = pos / gstInterval;
+//	//------------------Init----------------------------------
+//	if (playerData->stateMachine->getIsInit()) {
+//		playerData->stateMachine->updateSegment();
+//		seek_to_frame(playerData->demuxer,playerData->stateMachine->currentSegment.startTime,playerData->stateMachine->currentSegment.endTime, true);
+//		return TRUE;
+//	}
 
 		if (frame != lastFrame) {
-			//------------------Init----------------------------------
-			if (playerData->stateMachine->getIsInit()) {
-				playerData->stateMachine->updateSegment();
-				seek_to_frame(playerData->demuxer,playerData->stateMachine->currentSegment.startTime,playerData->stateMachine->currentSegment.endTime, true);
-				return TRUE;
-			}
 		}
 	}
 
@@ -183,8 +184,6 @@ int main(int argc, char *argv[]) {
 	StateMachine _stateMachine;
 	StateMachine *stateMachinePt = &_stateMachine;
 	playerData->stateMachine = stateMachinePt;
-
-
 
 
 	std::string fileLocation = "";
@@ -229,12 +228,12 @@ int main(int argc, char *argv[]) {
 	// Create a GValue for width
 	GValue width = G_VALUE_INIT;
 	g_value_init(&width, G_TYPE_INT);
-	g_value_set_int(&width, 2160);	//birds
+	g_value_set_int(&width, 1024);	//birds
 
 	// Create a GValue for height
 	GValue height = G_VALUE_INIT;
 	g_value_init(&height, G_TYPE_INT);
-	g_value_set_int(&height, 3840);	//birds
+	g_value_set_int(&height, 1280);	//birds
 
 	// Create a GValue for height
 	GValue top = G_VALUE_INIT;
@@ -248,17 +247,24 @@ int main(int argc, char *argv[]) {
 	gst_value_array_append_value(&new_dimensions, &width);
 	gst_value_array_append_value(&new_dimensions, &height);
 
+    std::cout << "Set:Width/Height" << std::endl;
 //	g_object_set_property(G_OBJECT(playerData->videosink), "render-rectangle", &new_dimensions);	//this is for glimageisnk
 
-////    std::cout << "Set:Width/Height" << std::endl;
 	g_object_set_property(G_OBJECT(playerData->videosink), "window-height",&height);	//this is for waylandsink
 	g_object_set_property(G_OBJECT(playerData->videosink), "window-width",&width);		//this is for waylandsink
 
 	std::cout << "Set:Sync" << std::endl;
 	GValue sync = G_VALUE_INIT;
 	g_value_init(&sync, G_TYPE_INT);
-	g_value_set_int(&sync, 0);
+	g_value_set_int(&sync, 1);
 	g_object_set_property(G_OBJECT(playerData->videosink), "sync", &sync);
+
+
+	std::cout << "Set:No-ShowPrerollFrame" << std::endl;
+	GValue prf = G_VALUE_INIT;
+	g_value_init(&prf, G_TYPE_INT);
+	g_value_set_int(&prf, 0);
+	g_object_set_property(G_OBJECT(playerData->videosink), "show-preroll-frame", &prf);
 
 //    std::cout << "Set:Qos for dodgy V4l2Dec" << std::endl;
 //    GValue qos = G_VALUE_INIT;
@@ -328,12 +334,18 @@ int main(int argc, char *argv[]) {
 //     // Print the caps information
 //     gchar *capsString = gst_caps_to_string(caps);
 //     g_print("Caps: %s\n", capsString);
-
-	std::cout << "Set Pipe Playing" << std::endl;
-	gst_element_set_state(playerData->pipeline, GST_STATE_PLAYING);
-
 	std::cout << "Set Timeout query position" << std::endl;
 	g_timeout_add(g_frame_interval, (GSourceFunc) query_position, playerData); //1.0 is a Gst clock
+
+	std::cout << "Set Pipe Playing" << std::endl;
+	gst_element_set_state(playerData->pipeline, GST_STATE_READY);
+	//------------------Init----------------------------------
+	if (playerData->stateMachine->getIsInit()) {
+		gst_element_set_state(playerData->pipeline, GST_STATE_PLAYING);
+		playerData->stateMachine->updateSegment();
+		seek_to_frame(playerData->demuxer,playerData->stateMachine->currentSegment.startTime,playerData->stateMachine->currentSegment.endTime, true);
+	}
+
 
 	std::cout << "Run main GLoop" << std::endl;
 	g_main_loop_run(playerData->loop);
