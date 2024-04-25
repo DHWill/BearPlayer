@@ -66,6 +66,7 @@ public:
     int currentPosition;
     int targetPosition;
     State currentState;
+    State lastState;
     State earlyExitState;
     State earlyExitQueue;
     bool isExitingEarly = false;
@@ -75,6 +76,7 @@ public:
     bool isActive = false;
     Sensor sensor;
     std::vector<int> possiblePositions;
+    int staleStateRoll;
 
 
 

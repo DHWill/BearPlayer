@@ -94,11 +94,11 @@ void StateMachine::setTargetPosition(int position) {
 //	position = randomNumberForTesting();
 
 //    targetPosition = possiblePositions[position % possiblePositions.size()];	//fix this, currently there are 2 positions for flowers: 3 for animals
+
 	targetPosition = position;
 	if ((tempEarlyExits.size() > 0) && (lastTargetPosition != targetPosition)) {
 		if (targetPosition != currentState.position) {
-			std::cout << "QueuingEarlyExit: " << tempEarlyExits[0].name
-					<< std::endl;
+			std::cout << "QueuingEarlyExit: " << tempEarlyExits[0].name<< std::endl;
 			lastTargetPosition = targetPosition;
 			isExitingEarly = true;
 		}
@@ -110,6 +110,16 @@ void StateMachine::setIsActive(bool _isActive) {
 }
 
 StateMachine::State StateMachine::updateState() {
+
+	if(currentState.position == targetPosition){
+		if(staleStateRoll > 3){
+			setTargetPosition(randomPositionForTesting());		//This is for Gods and Titans
+			staleStateRoll = 0;
+		}
+		else{
+			staleStateRoll ++;
+		}
+	}
 
 	earlyExitCount = 0;
 	State _nextState = currentState; //needs had state or dequeue shuffler
@@ -185,8 +195,7 @@ void StateMachine::updateSegment() {
 		currentState = updateState();
 		getTempEarlyExits(currentState.earlyExits);
 		std::cout << std::endl;
-		std::cout << "NewState:" << currentState.name << "| EarlyExits1: "
-				<< tempEarlyExits.size() << std::endl;
+		std::cout << "NewState:" << currentState.name << "| EarlyExits1: "<< tempEarlyExits.size() << std::endl;
 		_segment.startTime = currentState.startTime;
 		_segment.endTime = currentState.endTime;
 		_segment.name = currentState.name;
@@ -195,22 +204,19 @@ void StateMachine::updateSegment() {
 			_segment.startTime = currentState.startTime;
 			_segment.endTime = tempEarlyExits[0].transitionFromParent;
 			_segment.name = currentState.name;
-			std::cout << currentState.name << "| EarlyExitsInThisClip: "
-					<< tempEarlyExits.size() << std::endl;
+			std::cout << currentState.name << "| EarlyExitsInThisClip: "<< tempEarlyExits.size() << std::endl;
 //			tempEarlyExits.pop_front();		//without creates offset
 		}
 	} else {
 		_segment.startTime = tempEarlyExits[0].transitionFromParent;// -1?notwork	+1 not work
 		tempEarlyExits.pop_front();
-		std::cout << currentState.name << "| EarlyExitsLeft: "
-				<< tempEarlyExits.size() << std::endl;
+		std::cout << currentState.name << "| EarlyExitsLeft: " << tempEarlyExits.size() << std::endl;
 
 		if (tempEarlyExits.size() > size_t(0)) {		//playToEndOnLastCycle
 			_segment.endTime = tempEarlyExits[0].transitionFromParent;//-1 not work
 		} else {
 			_segment.endTime = currentState.endTime;
-			std::cout << "Playing:" << currentState.name << " to end"
-					<< std::endl;
+			std::cout << "Playing:" << currentState.name << " to end"<< std::endl;
 		}
 
 		if (tempEarlyExits.size() > 0) {
@@ -221,8 +227,7 @@ void StateMachine::updateSegment() {
 //		tempEarlyExits.pop_front();
 	}
 	currentSegment = _segment;
-	std::cout << "start:" << _segment.startTime << "end:" << _segment.endTime
-			<< std::endl;
+	std::cout << "start:" << _segment.startTime << "end:" << _segment.endTime<< std::endl;
 	return;
 //	return _segment;
 }

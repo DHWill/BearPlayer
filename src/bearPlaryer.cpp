@@ -34,19 +34,16 @@ typedef struct {
  * Pipeline Functions
  * ==================================================================================*/
 
-
+int staleState = 0;
 static bool updateStateMachine(gpointer _playerData) {
 	PlayerData *playerData = (PlayerData*) _playerData;
 	int p = playerData->sensorMan->getPositionValue();
 	std::cout << "position" << p << std::endl;
 	if (p == -1) {
 		playerData->stateMachine->setIsActive(false);
-		if ((playerData->stateMachine->currentState.hasEarlyExits) && (playerData->stateMachine->tempEarlyExits.size() == 0)) {
-			playerData->stateMachine->setTargetPosition(playerData->stateMachine->randomPositionForTesting());
-		}
-	} else {
+	}
+	else {
 		playerData->stateMachine->setIsActive(true);
-		playerData->stateMachine->setTargetPosition(playerData->stateMachine->randomPositionForTesting());
 //		playerData->stateMachine->setTargetPosition(p);		//this is for bear left right
 	}
 }
@@ -156,11 +153,11 @@ static gboolean query_position(gpointer *_playerData) {
 	if (gst_element_query_position(playerData->pipeline, GST_FORMAT_TIME,&pos)) {
 		gint64 frame = pos / gstInterval;
 //	//------------------Init----------------------------------
-//	if (playerData->stateMachine->getIsInit()) {
-//		playerData->stateMachine->updateSegment();
-//		seek_to_frame(playerData->demuxer,playerData->stateMachine->currentSegment.startTime,playerData->stateMachine->currentSegment.endTime, true);
-//		return TRUE;
-//	}
+	if (playerData->stateMachine->getIsInit()) {
+		playerData->stateMachine->updateSegment();
+		seek_to_frame(playerData->demuxer,playerData->stateMachine->currentSegment.startTime,playerData->stateMachine->currentSegment.endTime, true);
+		return TRUE;
+	}
 
 		if (frame != lastFrame) {
 		}
@@ -338,13 +335,7 @@ int main(int argc, char *argv[]) {
 	g_timeout_add(g_frame_interval, (GSourceFunc) query_position, playerData); //1.0 is a Gst clock
 
 	std::cout << "Set Pipe Playing" << std::endl;
-	gst_element_set_state(playerData->pipeline, GST_STATE_READY);
-	//------------------Init----------------------------------
-	if (playerData->stateMachine->getIsInit()) {
-		gst_element_set_state(playerData->pipeline, GST_STATE_PLAYING);
-		playerData->stateMachine->updateSegment();
-		seek_to_frame(playerData->demuxer,playerData->stateMachine->currentSegment.startTime,playerData->stateMachine->currentSegment.endTime, true);
-	}
+	gst_element_set_state(playerData->pipeline, GST_STATE_PLAYING);
 
 
 	std::cout << "Run main GLoop" << std::endl;
