@@ -4,7 +4,7 @@ int exit_main_loop = 0;
 
 uint8_t TofImager::setup() {
 
-	uint8_t status, isAlive;
+//	uint8_t status, isAlive;
 	VL53L5CX_Configuration Dev;
 
 	vl53l5cx_comms_init(&Dev.platform);
@@ -22,9 +22,11 @@ uint8_t TofImager::setup() {
 	if (!(status || !isAlive)) {
 		status = loop(&Dev);
 	} else {
-		std::cout << "SensorSetupFailed" << std::endl;
+		std::cout << "ToF Sensor Setup Failed" << std::endl;
 	}
-
+	mutex.lock();
+	isSetup = true;
+	mutex.unlock();
 	return status;
 }
 
@@ -33,7 +35,6 @@ uint8_t TofImager::loop(VL53L5CX_Configuration *p_dev) {
 	status = vl53l5cx_start_ranging(p_dev);
 	VL53L5CX_ResultsData Results; /* Results data from VL53L5CX */
 	uint8_t frame = 0;
-
 	while (1) {
 		isReady = wait_for_dataready(&p_dev->platform);
 		if (isReady) {
@@ -206,8 +207,83 @@ uint8_t TofImager::loop(VL53L5CX_Configuration *p_dev) {
 	return status;
 }
 
+
+
+
+bool PiRSensor::loop(){
+//	while(!calcHit(adc_to_voltage(adcVAL))){
+	while(1){
+		int adcVAL =readADC(pirSensorFSNode);
+		float voltage = adc_to_voltage(adcVAL);
+		if(calcHit(voltage)){
+			mutex.lock();
+			positionToSend = 1;
+			mutex.unlock();
+		}
+		usleep(30 * 1000);
+	}
+	return true;
+}
+
+float PiRSensor::adc_to_voltage(int adcValue){
+  return (adcValue / adcVDD) * vdd;
+}
+
+bool PiRSensor::calcHit(float value){
+  if((value <= outV + vi) && (value >= outV - vi)){
+    return true;
+  }
+  else{
+	  return false;
+  }
+}
+
+
+int PiRSensor::readADC(std::string deviceFilePath){
+    std::ifstream adcFile(deviceFilePath);
+
+    if (!adcFile.is_open()) {
+//        std::cerr << "Error: Could not open ADC file." << std::endl;
+        return -1;
+    }
+    std::string adcValue;
+    adcFile >> adcValue; // Read the ADC value as a string
+
+    // Convert the string to an integer
+    int adcIntValue;
+    try {
+        adcIntValue = std::stoi(adcValue);
+    } catch (const std::invalid_argument& e) {
+//        std::cerr << "Error: Invalid ADC value." << std::endl;
+        return -1;
+    } catch (const std::out_of_range& e) {
+//        std::cerr << "Error: ADC value out of range." << std::endl;
+        return -1;
+    }
+
+//    std::cout << "ADC Value: " << adcIntValue << std::endl;
+    adcFile.close(); // Close the file
+    return adcIntValue;
+}
+
 int SensorMan::getPositionValue() {
-	return _sensor.positionToSend;
+	int _ret = -1;
+	if(!isUsingPir){
+		if((_sensor.isSetup) && (_sensor.status || !_sensor.isAlive)){
+			sensorThread->detach();
+			pirThread.reset(new std::thread(&PiRSensor::loop, &_pirSensor));
+			std::cout << "Using PIR Sensor instead" << std::endl;
+			isUsingPir = true;
+		}
+		else {
+			_ret = _sensor.positionToSend;
+		}
+	}
+	else{
+		_ret = _pirSensor.positionToSend;
+		_pirSensor.positionToSend = -1;
+	}
+	return _ret;
 }
 
 void SensorMan::startSensors() {

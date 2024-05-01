@@ -9,8 +9,8 @@ StateMachine::StateMachine() {
 int StateMachine::randomPositionForTesting() {
 	std::random_device dev;
 	std::mt19937 rng(dev());
-	int nPositions = possiblePositions.size();
-	std::uniform_int_distribution<std::mt19937::result_type> dist6(0,nPositions - 1); // distribution in range [1, 6]
+	int nPositions = possiblePositions.size() -1;
+	std::uniform_int_distribution<std::mt19937::result_type> dist6(0,nPositions); // distribution in range [1, 6]
 	int randomNumber = dist6(rng);
 	int randomPosToUse = possiblePositions[randomNumber];
 	std::cout << "randomPosition generated" << randomPosToUse << std::endl;
@@ -113,7 +113,7 @@ StateMachine::State StateMachine::updateState() {
 
 	if(currentState.position == targetPosition){
 		if(staleStateRoll > 3){
-			setTargetPosition(randomPositionForTesting());		//This is for Gods and Titans
+			setTargetPosition((randomPositionForTesting() + (possiblePositions.size() + 1)) % possiblePositions.size());		//This is for Gods and Titans randon number and dont get self
 			staleStateRoll = 0;
 		}
 		else{

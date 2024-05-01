@@ -9,7 +9,7 @@
 #include "Sensor/SensorGrabber.h"
 #include <mutex>
 
-gint fps = 30;				//FRAMERATE!
+gint fps = 24;				//FRAMERATE!
 gfloat g_frame_interval = 1. / fps * 1000;
 gint64 gstInterval = GST_SECOND / fps;
 
@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
 	// Create a GValue for height
 	GValue height = G_VALUE_INIT;
 	g_value_init(&height, G_TYPE_INT);
-	g_value_set_int(&height, 1280);	//birds
+	g_value_set_int(&height, 768);	//birds
 
 	// Create a GValue for height
 	GValue top = G_VALUE_INIT;
