@@ -1,6 +1,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <gst/gst.h>
+#include <gst/controller/controller.h>
+#include <gst/controller/gstinterpolationcontrolsource.h>
 #include <glib-object.h>
 #include <unistd.h>
 #include <pthread.h>
@@ -9,7 +11,7 @@
 #include "Sensor/SensorGrabber.h"
 #include <mutex>
 
-gint fps = 24;				//FRAMERATE!
+gint fps = 30;				//FRAMERATE!
 gfloat g_frame_interval = 1. / fps * 1000;
 gint64 gstInterval = GST_SECOND / fps;
 
@@ -44,7 +46,7 @@ static bool updateStateMachine(gpointer _playerData) {
 	}
 	else {
 		playerData->stateMachine->setIsActive(true);
-//		playerData->stateMachine->setTargetPosition(p);		//this is for bear left right
+		playerData->stateMachine->setTargetPosition(p);		//this is for bear left right
 	}
 }
 
@@ -74,6 +76,7 @@ static void seek_to_frame(GstElement *pipeline, int frame_start, int frame_end,
 			GST_SEEK_TYPE_SET, time_nanoseconds_end);
 
 	if (gst_element_send_event(pipeline, seek_event)) {
+
 		std::cout << "Seeking! StartFrame:" << frame_start << " EndFrame :"<< frame_end << std::endl;
 	} else {
 		std::cout << "Seek Failed!" << std::endl;
@@ -201,11 +204,10 @@ int main(int argc, char *argv[]) {
 	GstElement *queue0 = gst_element_factory_make("queue", "queue0");
 	GstElement *h264parse = gst_element_factory_make("h264parse", "h264parse");
 	GstElement *imxvideoconvert_g2d = gst_element_factory_make("imxvideoconvert_g2d", "imxvideoconvert_g2d");
-	playerData->videosink = gst_element_factory_make("waylandsink","waylandsink");
-//    playerData->videosink = gst_element_factory_make("glimagesink", "glimagesink");
+//	playerData->videosink = gst_element_factory_make("waylandsink","waylandsink");
+    playerData->videosink = gst_element_factory_make("glimagesink", "glimagesink");
 	playerData->decoder = gst_element_factory_make("v4l2h264dec","v4l2h264dec");
 	GstElement *capsfilter = gst_element_factory_make("capsfilter","capsfilter");
-	GstElement *videorate = gst_element_factory_make("videorate", "videorate");
 
 //    std::cout << "CreateCaps" << std::endl;
 //    GstCaps *caps = gst_caps_new_simple (
@@ -225,12 +227,12 @@ int main(int argc, char *argv[]) {
 	// Create a GValue for width
 	GValue width = G_VALUE_INIT;
 	g_value_init(&width, G_TYPE_INT);
-	g_value_set_int(&width, 1024);	//birds
+	g_value_set_int(&width, 1920);	//birds
 
 	// Create a GValue for height
 	GValue height = G_VALUE_INIT;
 	g_value_init(&height, G_TYPE_INT);
-	g_value_set_int(&height, 768);	//birds
+	g_value_set_int(&height, 1920);	//birds
 
 	// Create a GValue for height
 	GValue top = G_VALUE_INIT;
@@ -245,10 +247,10 @@ int main(int argc, char *argv[]) {
 	gst_value_array_append_value(&new_dimensions, &height);
 
     std::cout << "Set:Width/Height" << std::endl;
-//	g_object_set_property(G_OBJECT(playerData->videosink), "render-rectangle", &new_dimensions);	//this is for glimageisnk
+	g_object_set_property(G_OBJECT(playerData->videosink), "render-rectangle", &new_dimensions);	//this is for glimageisnk
 
-	g_object_set_property(G_OBJECT(playerData->videosink), "window-height",&height);	//this is for waylandsink
-	g_object_set_property(G_OBJECT(playerData->videosink), "window-width",&width);		//this is for waylandsink
+//	g_object_set_property(G_OBJECT(playerData->videosink), "window-height",&height);	//this is for waylandsink
+//	g_object_set_property(G_OBJECT(playerData->videosink), "window-width",&width);		//this is for waylandsink
 
 	std::cout << "Set:Sync" << std::endl;
 	GValue sync = G_VALUE_INIT;
@@ -286,8 +288,9 @@ int main(int argc, char *argv[]) {
 	std::cout << "Link Filesrc/Demuxer" << std::endl;
 	gst_element_link_many(filesrc, playerData->demuxer, NULL);
 	std::cout << "Link Rest of elements" << std::endl;
-	gst_element_link_many(queue0, h264parse, playerData->decoder,imxvideoconvert_g2d, queue1, playerData->videosink, NULL);
-	g_signal_connect(playerData->demuxer, "pad-added",G_CALLBACK (on_pad_added), queue0);
+	gst_element_link_many(h264parse, playerData->decoder,imxvideoconvert_g2d, queue1, playerData->videosink, NULL);
+	g_signal_connect(playerData->demuxer, "pad-added",G_CALLBACK (on_pad_added), h264parse);
+
 
 	std::cout << "Set bus Message Watch" << std::endl;
 	GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(playerData->pipeline));
@@ -331,6 +334,9 @@ int main(int argc, char *argv[]) {
 //     // Print the caps information
 //     gchar *capsString = gst_caps_to_string(caps);
 //     g_print("Caps: %s\n", capsString);
+
+
+
 	std::cout << "Set Timeout query position" << std::endl;
 	g_timeout_add(g_frame_interval, (GSourceFunc) query_position, playerData); //1.0 is a Gst clock
 

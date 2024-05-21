@@ -46,12 +46,8 @@ uint8_t TofImager::loop(VL53L5CX_Configuration *p_dev) {
 			for (int y = 0; y <= gridWid * (gridWid - 1); y += gridWid) {
 				for (int x = gridWid - 1; x >= 0; x--) {
 					int pos = x + y;
-					uint8_t status =
-							Results.target_status[VL53L5CX_NB_TARGET_PER_ZONE
-									* pos];
-					int measurement = int(
-							Results.distance_mm[VL53L5CX_NB_TARGET_PER_ZONE
-									* pos]);
+					uint8_t status =Results.target_status[VL53L5CX_NB_TARGET_PER_ZONE* pos];
+					int measurement = int(Results.distance_mm[VL53L5CX_NB_TARGET_PER_ZONE* pos]);
 					positions[nMod] = measurement;
 					positionsBuffer[nMod][frame] = measurement;
 					nMod++;
@@ -79,8 +75,7 @@ uint8_t TofImager::loop(VL53L5CX_Configuration *p_dev) {
 				for (int y = 0; y < N_WIDTH; y++) {
 					int gridVal = positions[x + y * N_WIDTH];
 					if ((gridVal < MAX_DIST) && (gridVal > MIN_DIST)) {
-						resultGrid[x][y] = float(gridVal)
-								/ float(MAX_DIST - MIN_DIST);
+						resultGrid[x][y] = float(gridVal) / float(MAX_DIST - MIN_DIST);
 						averageX += resultGrid[x][y];
 						nVals++;
 					} else {
@@ -176,15 +171,13 @@ uint8_t TofImager::loop(VL53L5CX_Configuration *p_dev) {
 			positionAverage /= checkedFrames;
 
 			//Only require left middle right (012) out of 0123 1/2 = front
-			if (positionAverage == 0 || positionAverage == 1
-					|| positionAverage == 2) {
+			if (positionAverage == 0 || positionAverage == 1 ) {
 				positionAverage = 0;
 			}
-			if (positionAverage == 3 || positionAverage == 4) {
+			if (positionAverage == 2 ||positionAverage == 3 || positionAverage == 4 ) {
 				positionAverage = 1;
 			}
-			if (positionAverage == 5 || positionAverage == 6
-					|| positionAverage == 7) {
+			if (positionAverage == 5 || positionAverage == 6 || positionAverage == 7) {
 				positionAverage = 2;
 			}
 

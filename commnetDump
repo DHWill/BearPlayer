@@ -1,0 +1,59 @@
+//----Fade In Effect
+	// Link videoconvert to videomixer
+//	    GstPad *mixer_pad = gst_element_request_pad_simple(videomixer, "sink_%u");
+//	    GstPad *conv_pad = gst_element_get_static_pad(imxvideoconvert_g2d, "src");
+//	    gst_pad_link(conv_pad, mixer_pad);
+//	    gst_object_unref(conv_pad);
+//
+//	    // Set up controller for alpha property
+//	    GstControlSource *cs = gst_interpolation_control_source_new();
+//	    g_object_set (GST_INTERPOLATION_CONTROL_SOURCE(cs), "mode", GST_INTERPOLATION_MODE_LINEAR, NULL);
+//
+//
+//	    GstTimedValueControlSource *alpha_control = (GstTimedValueControlSource *) cs;
+//	    gst_object_add_control_binding(GST_OBJECT_CAST(mixer_pad), gst_direct_control_binding_new_absolute(GST_OBJECT_CAST(mixer_pad), "alpha", GST_CONTROL_SOURCE(alpha_control)));
+//
+//	    // Set alpha values to create fade-in effect
+//	    GstClockTime base_time = gst_element_get_base_time(playerData->pipeline);
+//	    gst_timed_value_control_source_set(alpha_control, base_time, 0.0);       // Alpha starts at 0
+//	    gst_timed_value_control_source_set(alpha_control, base_time + 5 * GST_SECOND, 1.0); // Alpha ends at 1 after 5 seconds
+//
+//	    gst_object_unref(cs);
+
+
+
+
+/////
+//	GstElement *black_source = gst_element_factory_make("videotestsrc", "black_source");
+//	g_object_set(black_source, "pattern", 1, NULL); // 1 is solid black
+//
+//	GstPad *black_pad = gst_element_get_static_pad(black_source, "src");
+//	GstPad *mixer_black_pad = gst_element_get_request_pad(videomixer, "sink_%u");
+//	gst_pad_link(black_pad, mixer_black_pad);
+//
+//    gst_bin_add(GST_BIN(playerData->pipeline), black_source);
+//    gst_element_set_state(black_source, GST_STATE_PLAYING);
+//
+//	GstPad *video_pad = gst_element_get_static_pad(imxvideoconvert_g2d, "src");
+//	GstPad *mixer_pad = gst_element_get_request_pad(videomixer, "sink_%u");
+//	gst_pad_link(video_pad, mixer_pad);
+//
+//
+//    // Set up controller for alpha property
+//	GValue alpha_value = G_VALUE_INIT;
+//	g_value_init(&alpha_value, G_TYPE_DOUBLE);
+//	gst_object_add_control_binding(GST_OBJECT_CAST(mixer_pad), gst_direct_control_binding_new(GST_OBJECT_CAST(mixer_pad), "alpha", gst_interpolation_control_source_new()));
+//
+//	GstControlSource *cs = gst_interpolation_control_source_new();
+//	g_object_set (GST_INTERPOLATION_CONTROL_SOURCE(cs), "mode", GST_INTERPOLATION_MODE_LINEAR, NULL);
+//
+//	gst_object_add_control_binding(GST_OBJECT_CAST(mixer_pad), gst_direct_control_binding_new(GST_OBJECT_CAST(mixer_pad), "alpha", cs));
+//
+//	GstClockTime start_time = gst_element_get_base_time(playerData->pipeline);
+//	gst_timed_value_control_source_set((GstTimedValueControlSource *)cs, start_time, 0.0); // alpha starts at 0
+//	gst_timed_value_control_source_set((GstTimedValueControlSource *)cs, start_time + GST_SECOND * 5, 1.0); // alpha ends at 1 after 5 seconds
+
+//	gst_object_unref(cs);
+//----Fade In Effect
+
+///

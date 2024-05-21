@@ -17,7 +17,7 @@
 #define TOF_SPEED_FPS 15
 #define N_WIDTH 8
 #define KNT_FRAMES TOF_SPEED_FPS / 2
-#define MAX_DIST 1500                 //1.5m  Culling
+#define MAX_DIST 2000                 //1.5m  Culling
 #define MIN_DIST 300
 
 //#define	O_RDONLY	0	/* Open read-only.  */

@@ -96,7 +96,7 @@ void StateMachine::setTargetPosition(int position) {
 //    targetPosition = possiblePositions[position % possiblePositions.size()];	//fix this, currently there are 2 positions for flowers: 3 for animals
 
 	targetPosition = position;
-	if ((tempEarlyExits.size() > 0) && (lastTargetPosition != targetPosition)) {
+	if ((tempEarlyExits.size() > 0)) {
 		if (targetPosition != currentState.position) {
 			std::cout << "QueuingEarlyExit: " << tempEarlyExits[0].name<< std::endl;
 			lastTargetPosition = targetPosition;
